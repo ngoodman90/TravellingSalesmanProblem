@@ -1,25 +1,22 @@
-import java.util.ArrayList;
-import java.util.Random;
-
 /**
  * Created by Noam on 12/1/2016.
  */
 public class RandomRoute extends AbstractTspAlgorithm
 {
-    public RandomRoute(ArrayList<Node> nodes) {super(nodes);}
-
-    public void buildRoute()
+    public RandomRoute(Graph graph)
     {
-        for (Node node : super.getNodes())
-        {
-            int randInt;
-            Random rand = new Random();
-            do {randInt = rand.nextInt(super.getNodes().size());}
-            while (super.getNodes().get(randInt).getPrev() != null);
-            Node next = super.getNodes().get(randInt);
-            node.setNext(next);
-            next.setPrev(node);
-            next.setDistanceToNext(node);
-        }
+        super(graph);
+        super.getGraph().buildRandomRoute();
+//      super.getGraph().removeLongestEdge();
+        this.calculateRouteLength();
+    }
+
+    @Override
+    public void calculateRouteLength()
+    {
+        int routeLength = 0;
+        for (Node node : super.getGraph().getNodes())
+            routeLength += node.getDistanceToNext();
+        super.setRouteLength(routeLength);
     }
 }

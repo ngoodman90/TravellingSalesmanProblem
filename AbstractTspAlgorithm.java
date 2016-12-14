@@ -5,35 +5,21 @@ import java.util.ArrayList;
  */
 public abstract class AbstractTspAlgorithm {
 
-    private ArrayList<Node> nodes;
+
+    private Graph graph;
     private int routeLength;
 
-    public AbstractTspAlgorithm(ArrayList<Node> nodes)
+    public AbstractTspAlgorithm(Graph graph)
     {
-        this.nodes = nodes;
+        this.graph = graph;
         this.routeLength = 0;
     }
 
-    public abstract void buildRoute();
-
-
-    public ArrayList<Node> getNodes() {
-        return nodes;
-    }
+    public Graph getGraph() {return graph;}
 
     public int getRouteLength() {return routeLength;}
 
-    public void setRouteLength()
-    {
-        int routeLength = 0;
-        for (Node node : this.nodes)
-        {
-            routeLength += node.getDistanceToNext();
-        }
-        this.routeLength = routeLength;
-    }
+    public void setRouteLength(int routeLength){this.routeLength = routeLength;}
 
-
-
-
+    public abstract void calculateRouteLength();
 }
