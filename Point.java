@@ -16,11 +16,12 @@ public class Point
 
     public int getY(){return this.y;}
 
-    public int distanceToPoint(Point p)
+    public double distanceToPoint(Point p)
     {
         int deltaX = this.x - p.getX();
         int deltaY = this.y - p.getY();
-        return (int)Math.sqrt(Math.pow(deltaX, 2) + Math.pow(deltaY, 2));
+        double delta = Math.pow(deltaX, 2) + Math.pow(deltaY, 2);
+        return Math.sqrt(delta);
     }
 
     public String toString(){return this.getX() + " " + this.getY();}
