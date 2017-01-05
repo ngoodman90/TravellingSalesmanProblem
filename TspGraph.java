@@ -3,9 +3,10 @@ import java.util.concurrent.ThreadLocalRandom;
 
 
 import org.graphstream.graph.Edge;
-import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.implementations.SingleGraph;
+import org.graphstream.ui.view.Viewer;
+import org.graphstream.ui.view.ViewerPipe;
 
 
 /**
@@ -14,26 +15,34 @@ import org.graphstream.graph.implementations.SingleGraph;
 public class TspGraph{
 
     private ArrayList<TspNode> nodes;
+    private int N;
 	private double routeLength;
-	private Graph displayGraph;
+	private double[][] distanceMatrix;
+	private SingleGraph displayGraph;
+	private Viewer viewer;
+	private ViewerPipe pipe;
+
+
+
+
 
     public TspGraph(String s)
     {
     	this.nodes = createNodes(s);
+    	this.N = nodes.size();
 		routeLength = Double.MAX_VALUE;
+		distanceMatrix = buildDistanceMatrix();
+		displayGraph = initDisplayGraph();
+		viewer = initViewer();
+		pipe = initPipe();
     }
 
-    public TspGraph(ArrayList<TspNode> nodes)
-    {
-    	this.nodes = nodes;
-		routeLength = Double.MAX_VALUE;;
-    }
-
-    public double getRouteLength(){ return routeLength;}
+	public double getRouteLength(){ return routeLength;}
 
 	public void setRouteLength(double routeLength) { this.routeLength = routeLength;}
 
-	public void setRouteLength() {
+	public void setRouteLength() 
+	{
 		double routeLength = 0.0;
 		for (TspNode node : nodes)
 			routeLength += node.getDistanceToNext();
@@ -43,7 +52,7 @@ public class TspGraph{
 	public ArrayList<TspNode> createNodes(String s)
 	{
 		Scanner scanner = new Scanner(s);
-		int numberOfNodes = scanner.nextInt(); // the total number of nodes
+		int numberOfNodes = scanner.nextInt();
 		scanner.nextLine();
 		ArrayList<TspNode> nodes = new ArrayList<>(numberOfNodes);
 		for (int i = 0; i < numberOfNodes; i++)
@@ -57,14 +66,53 @@ public class TspGraph{
 		return nodes;
 	}
 
-	public ArrayList<TspNode> getNodes() {return nodes;}
-
-	/*public void buildSequentialRoute()
+	public SingleGraph initDisplayGraph()
 	{
-		int size = nodes.size();
-		for (int i = 0; i < size; i++)
-			nodes.get(i % size).setNext(nodes.get((i + 1) % size));
-	}*/
+		SingleGraph g = new SingleGraph("DisplayGraph");
+		for (TspNode node : nodes)
+			g.addNode(node.getName()).addAttribute("xy", node.getLocation().getX(), node.getLocation().getY());
+
+		for (Node n : g)
+			n.addAttribute("label", n.getId());
+		return g;
+	}
+
+	public Viewer initViewer()
+	{
+		Viewer viewer;
+		viewer = displayGraph.display();
+		viewer.disableAutoLayout();
+		viewer.setCloseFramePolicy(Viewer.CloseFramePolicy.HIDE_ONLY);
+		return viewer;
+
+	}
+
+	private ViewerPipe initPipe()
+	{
+		ViewerPipe pipe;
+		pipe = viewer.newViewerPipe();
+		pipe.addAttributeSink(displayGraph);
+		return pipe;
+	}
+
+	public void buildSequentialRoute()
+	{
+		for (int i = 0; i < N; i++)
+			nodes.get(i).setNext(nodes.get((i + 1) % N));
+	}
+
+	public double[][] buildDistanceMatrix()
+	{
+		double[][] distanceMatrix = new double[N][N];
+		for (int i = 0; i < N; i++)
+		{
+			for (int j = 0; j < N; j++)
+			{
+				distanceMatrix[i][j] = nodes.get(i).distanceToNode(nodes.get(j));
+			}
+		}
+		return distanceMatrix;
+	}
 
 	public void buildRandomRoute()
 	{
@@ -89,30 +137,21 @@ public class TspGraph{
 
 	public void buildNearestNeighbourGraph()
     {
-    	Stack<TspNode> stack = new Stack();
-    	int numOfNodes = this.nodes.size();
+    	int N = this.nodes.size();
 		int nodeIndex = 0, minIndex;
 		double min;
-		boolean[] visited = new boolean[numOfNodes];
-		boolean foundMin = false;
-		double[][] distanceMatrix = new double[numOfNodes][numOfNodes];
+		boolean[] visited = new boolean[N];
+		boolean foundMin = false, routeComplete = false;
 		TspNode currNode, nextNode;
-		for (int i = 0; i < numOfNodes; i++)
-		{
-			TspNode n1 = nodes.get(i);
-			for (int j = 0; j < numOfNodes; j++)
-				distanceMatrix[i][j] = n1.distanceToNode(nodes.get(j));
-		}
-		System.out.println(Arrays.deepToString(distanceMatrix));
+		//System.out.println(Arrays.deepToString(distanceMatrix));
 
+		currNode = nodes.get(nodeIndex);
 		visited[nodeIndex] = true;
-		stack.push(nodes.get(nodeIndex));
-		while (!stack.isEmpty())
+		while (!routeComplete)
 		{
-			currNode = stack.pop();
 			min = Double.MAX_VALUE;
 			minIndex = -1;
-			for (int i = 0; i < numOfNodes; i++)
+			for (int i = 0; i < N; i++)
 			{
 				if (distanceMatrix[nodeIndex][i] < min && !visited[i]) {
 					min = distanceMatrix[nodeIndex][i];
@@ -126,49 +165,150 @@ public class TspGraph{
 				visited[minIndex] = true;
 				nextNode = nodes.get(minIndex);
 				currNode.setNext(nextNode);
-				stack.push(nextNode);
+				currNode = nextNode;
 			}
 			else
-				//set last nodes next to origin
+			{
 				currNode.setNext(nodes.get(0));
+				routeComplete = true;
+			}
 		}
     }
 
-    public void twoOptSwap() throws InterruptedException 
+    public void buildGreedyRoute()
+    {
+    	TspNode minNode1;
+		TspNode minNode2;
+    	Point minEdge;
+    	boolean[] hasNext = new boolean[N];
+		boolean[] hasPrev = new boolean[N];
+
+    	minEdge = findMinEdge(hasNext, hasPrev);
+    	while (minEdge.getX() != -1 && minEdge.getY() != -1)
+    	{
+    		minNode1 = nodes.get(minEdge.getX());
+	    	minNode2 = nodes.get(minEdge.getY());
+			minNode1.setNext(minNode2);
+			if (isCircuit(minNode2))
+			{
+				minNode1.setNextNull(minNode2);
+				hasNext[minEdge.getX()] = false;
+				hasPrev[minEdge.getY()] = false;
+			}
+			distanceMatrix[minEdge.getX()][minEdge.getY()] = Double.MAX_VALUE;
+			distanceMatrix[minEdge.getY()][minEdge.getX()] = Double.MAX_VALUE;
+			minEdge = findMinEdge(hasNext, hasPrev);
+    	}
+
+		rearrangeNodes();
+		distanceMatrix = buildDistanceMatrix();
+    }
+
+    public Point findMinEdge(boolean[] hasNext, boolean[] hasPrev)
+    {
+    	double min = Double.MAX_VALUE;
+    	Point ans = new Point(-1, -1);
+
+    	for (int i = 0; i < N; i++)
+    	{
+    		if (!hasNext[i])
+    		{
+    			for (int j = 0; j < N; j++)
+	    		{
+					if (!hasPrev[j])
+	    			{
+						if (distanceMatrix[i][j] > 0 && distanceMatrix[i][j] < min)
+						{
+							min = distanceMatrix[i][j];
+							ans = new Point(i, j);
+						}
+	    			}
+	    		}
+    		}
+    	}
+    	if (ans.getX() != -1 && ans.getY() != -1)
+		{
+			hasNext[ans.getX()] = true;
+			hasPrev[ans.getY()] = true;
+		}
+    	return ans;
+    }
+
+    public boolean isCircuit(TspNode n)
+	{
+		int numOfNodesInRoute = 0;
+		TspNode tempNode = n;
+		while ((tempNode = tempNode.getNext()) != null)
+		{
+			numOfNodesInRoute++;
+			if (tempNode.equals(n))
+			{
+				if (numOfNodesInRoute < N)
+					return true;
+				else
+					return false;
+			}
+		}
+		return false;
+	}
+
+    public void buildTwoOptRoute() throws InterruptedException 
     {
     	boolean foundShorterPath = false;
-		TspGraph newRoute;
-		outer:
-		for (int i = 1; i < nodes.size() - 1; i++)
+		double newRouteLength;
+		ArrayList<TspNode> newRoute;
+		
+		for (int i = 0; i < N - 1; i++)
 		{
-			for (int j = i + 1; j < nodes.size(); j++)
+			for (int j = i + 1; j < N; j++)
 			{
-				newRoute = new TspGraph(swap(nodes.get(i), nodes.get(j)));
-				newRoute.setRouteLength();
-				if (newRoute.getRouteLength() < routeLength)
+				if (shouldTrySwap(i, j))
 				{
-					nodes = newRoute.getNodes();
-					setRouteLength(newRoute.getRouteLength());
-					foundShorterPath = true;
-					break;
+					newRoute = swap(nodes.get(i), nodes.get(j));
+					newRouteLength = calculateRouteLength(newRoute);
+					if (newRouteLength < routeLength)
+					{
+						nodes = newRoute;
+						setRouteLength(newRouteLength);
+						foundShorterPath = true;
+						printGraph();
+						break;
+					}
 				}
 			}
 			if (foundShorterPath)
 				break;
 		}
 		if (foundShorterPath)
-			twoOptSwap();
+			buildTwoOptRoute();
+	}
+
+	public boolean shouldTrySwap(int nodeIndex1, int nodeIndex2)
+	{
+		TspNode n1, n2, n3, n4;
+		double n1_n2, n3_n4, n1_n3, n2_n4;
+
+		n1 = nodes.get(nodeIndex1);
+		n2 = n1.getNext();
+		n3 = nodes.get(nodeIndex2);
+		n4 = n3.getNext();
+		n1_n2 = n1.distanceToNode(n2);
+		n3_n4 = n3.distanceToNode(n4);
+		n1_n3 = n1.distanceToNode(n3);
+		n2_n4 = n2.distanceToNode(n4);
+
+		return (n1_n2 + n3_n4 > n1_n3 + n2_n4);
 	}
 
 	public ArrayList<TspNode> swap(TspNode n1, TspNode n2) 
 	{
-		ArrayList<TspNode> newRoute = new ArrayList<>(nodes.size());
+		ArrayList<TspNode> newRoute = new ArrayList<>(N);
 		ArrayList<TspNode> firstPart = new ArrayList<>();
 		ArrayList<TspNode> secondPart = new ArrayList<>();
 		ArrayList<TspNode> thirdPart = new ArrayList<>();
 		TspNode curr = nodes.get(0);
 
-		curr = addNodesToRoute(firstPart, curr, n1);
+		curr = addNodesToRoute(firstPart, curr, n1.getNext());
 		curr = addNodesToRoute(secondPart, curr, n2.getNext());
 		addNodesToRoute(thirdPart, curr, nodes.get(0));
 
@@ -225,7 +365,28 @@ public class TspGraph{
 				currNode.setNext(nextNode);
 			}
 		}
+	}
 
+	public void rearrangeNodes()
+	{
+		ArrayList<TspNode> rearrangedRoute = new ArrayList<>(N);
+		TspNode firstNode = nodes.get(0);
+		TspNode currNode = firstNode.getNext();
+		rearrangedRoute.add(firstNode);
+		while (!currNode.equals(firstNode))
+		{
+			rearrangedRoute.add(currNode);
+			currNode = currNode.getNext();
+		}
+		nodes = rearrangedRoute;
+	}
+
+	public double calculateRouteLength(ArrayList<TspNode> nodes)
+	{
+		double routeLength = 0.0;
+		for (TspNode node : nodes)
+			routeLength += node.getDistanceToNext();
+		return routeLength;
 	}
 
 	public String toString()
@@ -236,21 +397,32 @@ public class TspGraph{
 		return stringBuilder.toString();
 	}
 
-	public void printGraph() throws InterruptedException {
-		displayGraph = new SingleGraph("DisplayGraph");
-		for (TspNode node : nodes)
-			displayGraph.addNode(node.getName()).addAttribute("xy", node.getLocation().getX(), node.getLocation().getY());
+	public void printGraph() throws InterruptedException 
+	{
+		TspNode next;
+		while (displayGraph.getEdgeCount() > 0)
+		{
+			pipe.pump();
+			displayGraph.removeEdge(0);
+		}
+
+
 		for (TspNode node : nodes)
 		{
-			TspNode next = node.getNext();
+			next = node.getNext();
+			pipe.pump();
 			displayGraph.addEdge(node.getName() + next.getName(), node.getName(), next.getName()).addAttribute("length", node.getDistanceToNext());
 		}
-		for (Node n : displayGraph)
-			n.addAttribute("label", n.getId());
+
 		for (Edge e : displayGraph.getEachEdge())
+		{
+			pipe.pump();
 			e.addAttribute("label", "" + (int) e.getNumber("length"));
-		displayGraph.display(false);
-		Thread.sleep(5000);
+		}
+
+
+		//displayGraph.display(false);
+		Thread.sleep(500);
 
 	}
 }

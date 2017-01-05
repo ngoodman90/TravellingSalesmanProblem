@@ -52,6 +52,13 @@ public class TspNode
         distanceToNext = distanceToNode(next);
     }
 
+    public void setNextNull(TspNode next)
+    {
+        this.next = null;
+        next.setPrev(null);
+        distanceToNext = 0.0;
+    }
+
     public double getDistanceToNext() {
         return distanceToNext;
     }

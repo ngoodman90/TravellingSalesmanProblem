@@ -4,12 +4,10 @@
 
 import org.junit.Test;
 
-import java.util.ArrayList;
-
 public class AlgorithmTests  {
 
     private static String s1 = String.join("\n"
-                                    , "8"
+                                    , "16"
                                     , "a"
                                     , "1 2"
                                     , "b"
@@ -26,6 +24,43 @@ public class AlgorithmTests  {
                                     , "800 700"
                                     , "h"
                                     , "90 1000"
+                                    , "i"
+                                    , "666 777"
+                                    , "j"
+                                    , "423 900"
+                                    , "k"
+                                    , "135 794"
+                                    , "l"
+                                    , "873 199"
+                                    , "m"
+                                    , "357 275"
+                                    , "n"
+                                    , "920 239"
+                                    , "o"
+                                    , "158 543"
+                                    , "p"
+                                    , "582 258"
+                                    , ""
+                            );
+
+    private static String s2 = String.join("\n"
+                                    , "8"
+                                    , "a"
+                                    , "0 100"
+                                    , "b"
+                                    , "100 0"
+                                    , "c"
+                                    , "200 0"
+                                    , "d"
+                                    , "300 100"
+                                    , "e"
+                                    , "0 300"
+                                    , "f"
+                                    , "100 400"
+                                    , "g"
+                                    , "200 400"
+                                    , "h"
+                                    , "300 300"
                                     , ""
                             );
 
@@ -34,43 +69,37 @@ public class AlgorithmTests  {
         TspGraph tspGraph = new TspGraph(s1);
         tspGraph.buildRandomRoute();
         tspGraph.setRouteLength();
-        System.out.println("Random Route:\n" + tspGraph.toString());
-        System.out.println("randomRoute length: " + tspGraph.getRouteLength());
+        //System.out.println("Random Route:\n" + tspGraph.toString());
+        //System.out.println("randomRoute length: " + tspGraph.getRouteLength());
         tspGraph.printGraph();
-        Thread.sleep(5000);
     }
 
     @Test
     public void  nearestNeighbourTest() throws InterruptedException {
         TspGraph tspGraph = new TspGraph(s1);
         tspGraph.buildNearestNeighbourGraph();
-        tspGraph.setRouteLength();
-        System.out.println("Nearest neigbour:\n" + tspGraph.toString());
-        System.out.println("nearestNeighbourRoute length: " + tspGraph.getRouteLength());
+        //System.out.println("nearestNeighbourRoute length: " + tspGraph.getRouteLength());
         tspGraph.printGraph();
-        Thread.sleep(5000);
+    }
+
+    @Test
+    public void  greedyTest() throws InterruptedException {
+        TspGraph tspGraph = new TspGraph(s1);
+        tspGraph.buildGreedyRoute();
+        tspGraph.setRouteLength();
+        //System.out.println("Greedy length: " + tspGraph.getRouteLength());
+        tspGraph.printGraph();
     }
 
     @Test
     public void  singleSwapTest() throws InterruptedException {
-        ArrayList<TspNode> newRoute;
-        TspGraph newGraph;
-        TspNode n1, n2;
-
-        TspGraph tspGraph = new TspGraph(s1);
-        tspGraph.buildRandomRoute();
+        TspGraph tspGraph = new TspGraph(s2);
+        tspGraph.buildSequentialRoute();
         tspGraph.setRouteLength();
-        System.out.println("pre swap graph:\n" + tspGraph.toString());
-        System.out.println("pre swap length: " + tspGraph.getRouteLength());
-
-        n1 = tspGraph.getNodes().get(2);
-        n2 = tspGraph.getNodes().get(5);
-        newRoute = tspGraph.swap(n1, n2);
-        newGraph = new TspGraph(newRoute);
-        newGraph.setRouteLength();
-        System.out.println("post swap graph:\n" + newGraph.toString());
-        System.out.println("post swap length: " + newGraph.getRouteLength());
-
+        tspGraph.printGraph();
+        tspGraph.buildTwoOptRoute();
+        tspGraph.setRouteLength();
+        tspGraph.printGraph();
     }
 
     @Test
@@ -78,15 +107,13 @@ public class AlgorithmTests  {
         TspGraph tspGraph = new TspGraph(s1);
         tspGraph.buildRandomRoute();
         tspGraph.setRouteLength();
-        System.out.println("pre swap TspGraph:\n" + tspGraph.toString());
-        System.out.println("pre swap length: " + tspGraph.getRouteLength());
-        /*tspGraph.printGraph();
-        Thread.sleep(5000);*/
-        tspGraph.twoOptSwap();
-        tspGraph.setRouteLength();
-        System.out.println("Two Opt TspGraph:\n" + tspGraph.toString());
-        System.out.println("twoOptSwap length: " + tspGraph.getRouteLength());
+        //System.out.println("pre swap TspGraph:\n" + tspGraph.toString());
+        //System.out.println("pre swap length: " + tspGraph.getRouteLength());
         tspGraph.printGraph();
-        Thread.sleep(2000);
+        tspGraph.buildTwoOptRoute();
+        tspGraph.setRouteLength();
+        //System.out.println("Two Opt TspGraph:\n" + tspGraph.toString());
+        //System.out.println("twoOptSwap length: " + tspGraph.getRouteLength());
+        Thread.sleep(3000);
     }
 }
