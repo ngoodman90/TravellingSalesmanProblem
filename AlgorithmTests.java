@@ -133,6 +133,26 @@ public class AlgorithmTests{
 
     @Test
     public void  ThreeAlgorithmTest() throws InterruptedException {
+        TspGraph tspGraph = new TspGraph(100, true);
+
+        tspGraph.buildGreedyRoute();
+        tspGraph.setRouteLength();
+        tspGraph.printGraph();
+        Thread.sleep(1000);
+
+        tspGraph.buildRandomRoute();
+        tspGraph.setRouteLength();
+        tspGraph.printGraph();
+        Thread.sleep(1000);
+
+        tspGraph.buildTwoOptRoute();
+        tspGraph.setRouteLength();
+        tspGraph.printGraph();
+        Thread.sleep(5000);
+    }
+
+    @Test
+    public void  ThreeAlgorithmTest2() throws InterruptedException {
         for (int i = 0; i < 10; i++)
         {
             System.out.println( i + ".");
