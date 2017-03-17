@@ -66,18 +66,18 @@ public class AlgorithmTests{
 
     @Test
     public void  randomGraphTest() throws InterruptedException {
-        TspGraph tspGraph = new TspGraph(s1, true);
-        tspGraph.buildRandomRoute();
-        tspGraph.setRouteLength();
-        tspGraph.printGraph();
+        EuclideanGraph euclideanGraph = new EuclideanGraph(s1, true);
+        euclideanGraph.buildRandomRoute();
+        euclideanGraph.setRouteLength();
+        euclideanGraph.printGraph();
     }
 
     @Test
     public void  greedyTest() throws InterruptedException {
-        TspGraph tspGraph = new TspGraph(s2, true);
-        tspGraph.buildGreedyRoute();
-        tspGraph.setRouteLength();
-        tspGraph.printGraph();
+        EuclideanGraph euclideanGraph = new EuclideanGraph(s2, true);
+        euclideanGraph.buildGreedyRoute();
+        euclideanGraph.setRouteLength();
+        euclideanGraph.printGraph();
         Thread.sleep(3000);
     }
 
@@ -86,10 +86,10 @@ public class AlgorithmTests{
     {
         for (int i = 0; i < 10; i++)
         {
-            TspGraph tspGraph = new TspGraph(200, true);
-            tspGraph.buildGreedyRoute();
-            tspGraph.setRouteLength();
-            tspGraph.printGraph();
+            EuclideanGraph euclideanGraph = new EuclideanGraph(200, true);
+            euclideanGraph.buildGreedyRoute();
+            euclideanGraph.setRouteLength();
+            euclideanGraph.printGraph();
             Thread.sleep(3000);
         }
     }
@@ -97,57 +97,57 @@ public class AlgorithmTests{
 
     @Test
     public void  singleSwapTest() throws InterruptedException {
-        TspGraph tspGraph = new TspGraph(s2, true);
-        tspGraph.buildSequentialRoute();
-        tspGraph.setRouteLength();
-        tspGraph.printGraph();
+        EuclideanGraph euclideanGraph = new EuclideanGraph(s2, true);
+        euclideanGraph.buildSequentialRoute();
+        euclideanGraph.setRouteLength();
+        euclideanGraph.printGraph();
         Thread.sleep(3000);
-        tspGraph.buildTwoOptRoute();
-        tspGraph.setRouteLength();
-        tspGraph.printGraph();
+        euclideanGraph.buildTwoOptRoute();
+        euclideanGraph.setRouteLength();
+        euclideanGraph.printGraph();
         Thread.sleep(3000);
     }
 
     @Test
     public void  twoOptTest() throws InterruptedException {
-        TspGraph tspGraph = new TspGraph(s1, true);
-        tspGraph.buildRandomRoute();
-        tspGraph.setRouteLength();
-        tspGraph.printGraph();
-        tspGraph.buildTwoOptRoute();
-        tspGraph.setRouteLength();
+        EuclideanGraph euclideanGraph = new EuclideanGraph(s1, true);
+        euclideanGraph.buildRandomRoute();
+        euclideanGraph.setRouteLength();
+        euclideanGraph.printGraph();
+        euclideanGraph.buildTwoOptRoute();
+        euclideanGraph.setRouteLength();
         Thread.sleep(3000);
     }
 
     @Test
     public void  twoOptRandomGraph() throws InterruptedException {
-        TspGraph tspGraph = new TspGraph(30, true);
-        tspGraph.buildRandomRoute();
-        tspGraph.setRouteLength();
-        tspGraph.printGraph();
-        tspGraph.buildTwoOptRoute();
-        tspGraph.setRouteLength();
-        System.out.println("twoOptSwap length: " + tspGraph.getRouteLength());
+        EuclideanGraph euclideanGraph = new EuclideanGraph(30, true);
+        euclideanGraph.buildRandomRoute();
+        euclideanGraph.setRouteLength();
+        euclideanGraph.printGraph();
+        euclideanGraph.buildTwoOptRoute();
+        euclideanGraph.setRouteLength();
+        System.out.println("twoOptSwap length: " + euclideanGraph.getRouteLength());
         Thread.sleep(3000);
     }
 
     @Test
     public void  ThreeAlgorithmTest() throws InterruptedException {
-        TspGraph tspGraph = new TspGraph(100, true);
+        EuclideanGraph euclideanGraph = new EuclideanGraph(100, true);
 
-        tspGraph.buildGreedyRoute();
-        tspGraph.setRouteLength();
-        tspGraph.printGraph();
+        euclideanGraph.buildGreedyRoute();
+        euclideanGraph.setRouteLength();
+        euclideanGraph.printGraph();
         Thread.sleep(1000);
 
-        tspGraph.buildRandomRoute();
-        tspGraph.setRouteLength();
-        tspGraph.printGraph();
+        euclideanGraph.buildRandomRoute();
+        euclideanGraph.setRouteLength();
+        euclideanGraph.printGraph();
         Thread.sleep(1000);
 
-        tspGraph.buildTwoOptRoute();
-        tspGraph.setRouteLength();
-        tspGraph.printGraph();
+        euclideanGraph.buildTwoOptRoute();
+        euclideanGraph.setRouteLength();
+        euclideanGraph.printGraph();
         Thread.sleep(5000);
     }
 
@@ -156,34 +156,34 @@ public class AlgorithmTests{
         for (int i = 0; i < 10; i++)
         {
             System.out.println( i + ".");
-            TspGraph tspGraph = new TspGraph((i + 1) * 100, false);
+            EuclideanGraph euclideanGraph = new EuclideanGraph((i + 1) * 100, false);
 
             final long GreedyRouteStartTime = System.nanoTime();
-            tspGraph.buildGreedyRoute();
+            euclideanGraph.buildGreedyRoute();
             final long GreedyRouteEndTime = System.nanoTime();
             System.out.println("GreedyRoute execution time: " + (GreedyRouteEndTime - GreedyRouteStartTime));
-            tspGraph.setRouteLength();
-            System.out.println("GreedyRoute length: " + tspGraph.getRouteLength());
+            euclideanGraph.setRouteLength();
+            System.out.println("GreedyRoute length: " + euclideanGraph.getRouteLength());
 
             final long randomStartTime = System.nanoTime();
-            tspGraph.buildRandomRoute();
+            euclideanGraph.buildRandomRoute();
             final long randomEndTime = System.nanoTime();
             System.out.println("Random execution time: " + (randomEndTime - randomStartTime));
-            tspGraph.setRouteLength();
-            System.out.println("Random length: " + tspGraph.getRouteLength());
+            euclideanGraph.setRouteLength();
+            System.out.println("Random length: " + euclideanGraph.getRouteLength());
 
             final long twoOptStartTime = System.nanoTime();
-            tspGraph.buildTwoOptRoute();
+            euclideanGraph.buildTwoOptRoute();
             final long twoOptEndTime = System.nanoTime();
             System.out.println("TwoOptSwap execution time: " + (twoOptEndTime - twoOptStartTime));
-            tspGraph.setRouteLength();
-            System.out.println("TwoOptSwap length: " + tspGraph.getRouteLength());
+            euclideanGraph.setRouteLength();
+            System.out.println("TwoOptSwap length: " + euclideanGraph.getRouteLength());
             System.out.println("");
         }
     }
 
     @Test
-    public void  statistics() throws InterruptedException
+    public void statistics() throws InterruptedException
     {
         int intervals = 10;
         int timesTestRuns = 100;
@@ -195,23 +195,23 @@ public class AlgorithmTests{
         {
             for (int j = 0; j < timesTestRuns; j++)
             {
-                TspGraph tspGraph = new TspGraph((i + 1) * 100, false);
+                EuclideanGraph euclideanGraph = new EuclideanGraph((i + 1) * 100, false);
 
-                tspGraph.buildGreedyRoute();
-                tspGraph.setRouteLength();
-                greedyLength[i][j] = tspGraph.getRouteLength();
+                euclideanGraph.buildGreedyRoute();
+                euclideanGraph.setRouteLength();
+                greedyLength[i][j] = euclideanGraph.getRouteLength();
 
-                tspGraph.buildTwoOptRoute();
-                tspGraph.setRouteLength();
-                twoOptSwapLength1[i][j] = tspGraph.getRouteLength();
+                euclideanGraph.buildTwoOptRoute();
+                euclideanGraph.setRouteLength();
+                twoOptSwapLength1[i][j] = euclideanGraph.getRouteLength();
 
-                tspGraph.buildRandomRoute();
-                tspGraph.setRouteLength();
-                randomLength[i][j] = tspGraph.getRouteLength();
+                euclideanGraph.buildRandomRoute();
+                euclideanGraph.setRouteLength();
+                randomLength[i][j] = euclideanGraph.getRouteLength();
 
-                tspGraph.buildTwoOptRoute();
-                tspGraph.setRouteLength();
-                twoOptSwapLength2[i][j] = tspGraph.getRouteLength();
+                euclideanGraph.buildTwoOptRoute();
+                euclideanGraph.setRouteLength();
+                twoOptSwapLength2[i][j] = euclideanGraph.getRouteLength();
 
 
             }
@@ -257,6 +257,107 @@ public class AlgorithmTests{
         for (int i = 0; i < intervals; i++)
         {
             System.out.println(i + ":\n");
+            for (int j = 0; j < timesTestRuns; j++)
+            {
+                System.out.println(twoOptSwapLength1[i][j]);
+            }
+        }
+    }
+
+    @Test
+    public void  randomDistanceGraphTest() throws InterruptedException {
+        DistanceGraph distanceGraph = new DistanceGraph(200);
+        distanceGraph.buildRandomRoute();
+        distanceGraph.setRouteLength();
+        System.out.println("Random Length: " + distanceGraph.getRouteLength());
+        distanceGraph.buildTwoOptRoute();
+        distanceGraph.setRouteLength();
+        System.out.println("Two Opt 1 Length: " + distanceGraph.getRouteLength());
+        distanceGraph.resetGraph();
+        distanceGraph.buildGreedyRoute();
+        distanceGraph.setRouteLength();
+        System.out.println("Greedy Length: " + distanceGraph.getRouteLength());
+        distanceGraph.buildTwoOptRoute();
+        distanceGraph.setRouteLength();
+        System.out.println("Two Opt 2 Length: " + distanceGraph.getRouteLength());
+
+    }
+
+    @Test
+    public void distanceStatistics() throws InterruptedException
+    {
+        int intervals = 10;
+        int timesTestRuns = 100;
+        double[][] randomLength = new double[intervals][timesTestRuns];
+        double[][] greedyLength = new double[intervals][timesTestRuns];
+        double[][] twoOptSwapLength1 = new double[intervals][timesTestRuns];
+        double[][] twoOptSwapLength2 = new double[intervals][timesTestRuns];
+        for (int i = 0; i < intervals; i++)
+        {
+            System.out.println(i);
+            for (int j = 0; j < timesTestRuns; j++)
+            {
+                DistanceGraph distanceGraph = new DistanceGraph((i + 1) * 100);
+
+                distanceGraph.buildGreedyRoute();
+                distanceGraph.setRouteLength();
+                greedyLength[i][j] = distanceGraph.getRouteLength();
+
+                distanceGraph.buildTwoOptRoute();
+                distanceGraph.setRouteLength();
+                twoOptSwapLength1[i][j] = distanceGraph.getRouteLength();
+
+                distanceGraph.buildRandomRoute();
+                distanceGraph.setRouteLength();
+                randomLength[i][j] = distanceGraph.getRouteLength();
+
+                distanceGraph.buildTwoOptRoute();
+                distanceGraph.setRouteLength();
+                twoOptSwapLength2[i][j] = distanceGraph.getRouteLength();
+
+
+            }
+        }
+        System.out.println("Random Length:");
+        for (int i = 0; i < intervals; i++)
+        {
+            System.out.printf("\n");
+            for (int j = 0; j < timesTestRuns; j++)
+            {
+                System.out.println(randomLength[i][j]);
+            }
+        }
+
+        System.out.printf("\n\n");
+
+        System.out.println("Two opt swap 2 Length:");
+        for (int i = 0; i < intervals; i++)
+        {
+            System.out.printf("\n");
+            for (int j = 0; j < timesTestRuns; j++)
+            {
+                System.out.println(twoOptSwapLength2[i][j]);
+            }
+        }
+
+        System.out.printf("\n\n");
+
+        System.out.println("Greedy Length:");
+        for (int i = 0; i < intervals; i++)
+        {
+            System.out.printf("\n");
+            for (int j = 0; j < timesTestRuns; j++)
+            {
+                System.out.println(greedyLength[i][j]);
+            }
+        }
+
+        System.out.printf("\n\n");
+
+        System.out.println("Two opt swap 1 Length:");
+        for (int i = 0; i < intervals; i++)
+        {
+            System.out.printf("\n");
             for (int j = 0; j < timesTestRuns; j++)
             {
                 System.out.println(twoOptSwapLength1[i][j]);

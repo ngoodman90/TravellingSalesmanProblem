@@ -1,15 +1,15 @@
 /**
  * Created by Noam on 12/1/2016.
  */
-public class TspNode
+public class EuclideanNode
 {
     private String name;
     private int id;
     private DoublePoint location;
-    private TspNode next;
+    private EuclideanNode next;
     private double distanceToNext;
 
-    TspNode(String name, int id, DoublePoint location)
+    EuclideanNode(String name, int id, DoublePoint location)
     {
         this.name = name;
         this.id = id;
@@ -18,7 +18,7 @@ public class TspNode
         this.distanceToNext = 0.0;
     }
 
-    TspNode(String name, int id, DoublePoint location, TspNode next, double distanceToNext)
+    EuclideanNode(String name, int id, DoublePoint location, EuclideanNode next, double distanceToNext)
     {
         this.name = name;
         this.id = id;
@@ -35,11 +35,11 @@ public class TspNode
         return location;
     }
 
-    public TspNode getNext() {
+    public EuclideanNode getNext() {
         return next;
     }
 
-    public void setNext(TspNode next) {
+    public void setNext(EuclideanNode next) {
         this.next = next;
         distanceToNext = distanceToNode(next);
     }
@@ -48,7 +48,7 @@ public class TspNode
         return distanceToNext;
     }
 
-    public double distanceToNode(TspNode otherTspNode){ return this.location.distanceToPoint(otherTspNode.getLocation());}
+    public double distanceToNode(EuclideanNode otherEuclideanNode){ return this.location.distanceToPoint(otherEuclideanNode.getLocation());}
 
     public void resetNode()
     {
@@ -68,7 +68,7 @@ public class TspNode
     }
 
     @Override
-    public TspNode clone() {return new TspNode(name, id, location, next, distanceToNext);}
+    public EuclideanNode clone() {return new EuclideanNode(name, id, location, next, distanceToNext);}
 
-    public boolean equals(TspNode otherTspNode){ return id == otherTspNode.getId();}
+    public boolean equals(EuclideanNode otherEuclideanNode){ return id == otherEuclideanNode.getId();}
 }

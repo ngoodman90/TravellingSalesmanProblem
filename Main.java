@@ -24,25 +24,25 @@ public class Main
         for (int i = 0; i < numberOfRuns; i++)
         {
             System.out.println(i);
-            TspGraph tspGraph = new TspGraph(numOfNodes, false);
+            EuclideanGraph euclideanGraph = new EuclideanGraph(numOfNodes, false);
 
             final long twoOptStartTime1 = System.currentTimeMillis();
-            tspGraph.buildGreedyRoute();
-            tspGraph.setRouteLength();
+            euclideanGraph.buildGreedyRoute();
+            euclideanGraph.setRouteLength();
 
-            tspGraph.buildTwoOptRoute();
-            tspGraph.setRouteLength();
-            twoOptSwapLength1[i] = tspGraph.getRouteLength();
+            euclideanGraph.buildTwoOptRoute();
+            euclideanGraph.setRouteLength();
+            twoOptSwapLength1[i] = euclideanGraph.getRouteLength();
             final long twoOptEndTime1 = System.currentTimeMillis();
             twoOptTime1[i] = twoOptEndTime1 - twoOptStartTime1;
 
             final long twoOptStartTime2 = System.currentTimeMillis();
-            tspGraph.buildRandomRoute();
-            tspGraph.setRouteLength();
+            euclideanGraph.buildRandomRoute();
+            euclideanGraph.setRouteLength();
 
-            tspGraph.buildTwoOptRoute();
-            tspGraph.setRouteLength();
-            twoOptSwapLength2[i] = tspGraph.getRouteLength();
+            euclideanGraph.buildTwoOptRoute();
+            euclideanGraph.setRouteLength();
+            twoOptSwapLength2[i] = euclideanGraph.getRouteLength();
             final long twoOptEndTime2 = System.currentTimeMillis();
             twoOptTime2[i] = twoOptEndTime2 - twoOptStartTime2;
 

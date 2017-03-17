@@ -10,9 +10,9 @@ import org.graphstream.ui.view.ViewerPipe;
 /**
  * Created by Noam on 12/11/2016.
  */
-public class TspGraph{
+public class EuclideanGraph {
 
-    private ArrayList<TspNode> nodes;
+    private ArrayList<EuclideanNode> nodes;
     private int N;
 	private double routeLength;
 	private double[][] distanceMatrix;
@@ -21,7 +21,7 @@ public class TspGraph{
 	private Viewer viewer;
 	private ViewerPipe pipe;
 
-    public TspGraph(String s, boolean graphics)
+    public EuclideanGraph(String s, boolean graphics)
     {
     	this.nodes = createNodes(s);
     	this.N = nodes.size();
@@ -36,7 +36,7 @@ public class TspGraph{
 		}
     }
 
-	public TspGraph(int n, boolean graphics)
+	public EuclideanGraph(int n, boolean graphics)
 	{
 		this.nodes = createRandomNodes(n);
 		this.N = nodes.size();
@@ -58,38 +58,38 @@ public class TspGraph{
 	public void setRouteLength()
 	{
 		double routeLength = 0.0;
-		for (TspNode node : nodes)
+		for (EuclideanNode node : nodes)
 			routeLength += node.getDistanceToNext();
 		this.routeLength =  routeLength;
 	}
 
-	public ArrayList<TspNode> createRandomNodes(int num)
+	public ArrayList<EuclideanNode> createRandomNodes(int num)
 	{
 		Random random = new Random();
-		ArrayList<TspNode> randomNodes = new ArrayList<>(num);
+		ArrayList<EuclideanNode> randomNodes = new ArrayList<>(num);
 		double randX, randY;
 		for (int i = 0; i < num; i++)
 		{
 			randX = random.nextDouble();
 			randY = random.nextDouble();
-			randomNodes.add(new TspNode(Integer.toString(i).toString(), i, new DoublePoint(randX, randY)));
+			randomNodes.add(new EuclideanNode(Integer.toString(i).toString(), i, new DoublePoint(randX, randY)));
 		}
 		return randomNodes;
 	}
 
-	public ArrayList<TspNode> createNodes(String s)
+	public ArrayList<EuclideanNode> createNodes(String s)
 	{
 		Scanner scanner = new Scanner(s);
 		int numberOfNodes = scanner.nextInt();
 		scanner.nextLine();
-		ArrayList<TspNode> nodes = new ArrayList<>(numberOfNodes);
+		ArrayList<EuclideanNode> nodes = new ArrayList<>(numberOfNodes);
 		for (int i = 0; i < numberOfNodes; i++)
 		{
 			String name = scanner.nextLine();
 			int x = scanner.nextInt();
 			int y = scanner.nextInt();
 			scanner.nextLine();//read newline char
-			nodes.add(new TspNode(name, i, new DoublePoint(x, y)));
+			nodes.add(new EuclideanNode(name, i, new DoublePoint(x, y)));
 		}
 		return nodes;
 	}
@@ -99,7 +99,7 @@ public class TspGraph{
 		if (graphics)
 		{
 			SingleGraph g = new SingleGraph("DisplayGraph");
-			for (TspNode node : nodes)
+			for (EuclideanNode node : nodes)
 				g.addNode(node.getName()).addAttribute("xy", node.getLocation().getX(), node.getLocation().getY());
 
 			for (Node n : g)
@@ -155,8 +155,8 @@ public class TspGraph{
 
 	public void buildRandomRoute()
 	{
-		ArrayList<TspNode> newRoute = new ArrayList<>();
-		TspNode lastNode, addedNode;
+		ArrayList<EuclideanNode> newRoute = new ArrayList<>();
+		EuclideanNode lastNode, addedNode;
 		int randInt;
 
 		newRoute.add(nodes.get(0));
@@ -176,8 +176,8 @@ public class TspGraph{
 
     public void buildGreedyRoute()
     {
-    	TspNode minNode1;
-		TspNode minNode2;
+    	EuclideanNode minNode1;
+		EuclideanNode minNode2;
 		IntPoint minEdge;
     	boolean[] hasNext = new boolean[N];
 		boolean[] hasPrev = new boolean[N];
@@ -233,10 +233,10 @@ public class TspGraph{
     	return ans;
     }
 
-    public boolean isCircuit(TspNode n)
+    public boolean isCircuit(EuclideanNode n)
 	{
 		int numOfNodesInRoute = 0;
-		TspNode tempNode = n;
+		EuclideanNode tempNode = n;
 		while ((tempNode = tempNode.getNext()) != null)
 		{
 			numOfNodesInRoute++;
@@ -253,9 +253,9 @@ public class TspGraph{
 
 	public void rearrangeNodes()
 	{
-		ArrayList<TspNode> rearrangedRoute = new ArrayList<>(N);
-		TspNode firstNode = nodes.get(0);
-		TspNode currNode = firstNode.getNext();
+		ArrayList<EuclideanNode> rearrangedRoute = new ArrayList<>(N);
+		EuclideanNode firstNode = nodes.get(0);
+		EuclideanNode currNode = firstNode.getNext();
 		rearrangedRoute.add(firstNode);
 		while (!currNode.equals(firstNode))
 		{
@@ -269,7 +269,7 @@ public class TspGraph{
 	{
 		boolean foundShorterPath = false;
 		double newRouteLength;
-		ArrayList<TspNode> newRoute;
+		ArrayList<EuclideanNode> newRoute;
 		int i;
 		Outer:
 		for (i = 0; i < N - 1; i++)
@@ -302,7 +302,7 @@ public class TspGraph{
 
 	public boolean shouldTrySwap(int nodeIndex1, int nodeIndex2)
 	{
-		TspNode n1, n2, n3, n4;
+		EuclideanNode n1, n2, n3, n4;
 		double n1_n2, n3_n4, n1_n3, n2_n4;
 
 		n1 = nodes.get(nodeIndex1);
@@ -317,13 +317,13 @@ public class TspGraph{
 		return (n1_n2 + n3_n4 > n1_n3 + n2_n4);
 	}
 
-	public ArrayList<TspNode> swap(TspNode n1, TspNode n2) 
+	public ArrayList<EuclideanNode> swap(EuclideanNode n1, EuclideanNode n2)
 	{
-		ArrayList<TspNode> newRoute = new ArrayList<>(N);
-		ArrayList<TspNode> firstPart = new ArrayList<>();
-		ArrayList<TspNode> secondPart = new ArrayList<>();
-		ArrayList<TspNode> thirdPart = new ArrayList<>();
-		TspNode curr = nodes.get(0);
+		ArrayList<EuclideanNode> newRoute = new ArrayList<>(N);
+		ArrayList<EuclideanNode> firstPart = new ArrayList<>();
+		ArrayList<EuclideanNode> secondPart = new ArrayList<>();
+		ArrayList<EuclideanNode> thirdPart = new ArrayList<>();
+		EuclideanNode curr = nodes.get(0);
 
 		curr = addNodesToRoute(firstPart, curr, n1.getNext());
 		curr = addNodesToRoute(secondPart, curr, n2.getNext());
@@ -338,14 +338,14 @@ public class TspGraph{
 		return newRoute;
 	}
 
-	private void appendRoute(ArrayList<TspNode> route1, ArrayList<TspNode> route2)
+	private void appendRoute(ArrayList<EuclideanNode> route1, ArrayList<EuclideanNode> route2)
 	{
 		if (route1.size() == 0)
 			route1.addAll(route2);
 
 		else if (!(route2.size() == 0))
 		{
-			TspNode firstNodeRoute1, lastNodeRoute1, firstNodeRoute2;
+			EuclideanNode firstNodeRoute1, lastNodeRoute1, firstNodeRoute2;
 			lastNodeRoute1 = route1.get(route1.size() - 1);
 			firstNodeRoute2 = route2.get(0);
 			lastNodeRoute1.setNext(firstNodeRoute2);
@@ -358,7 +358,7 @@ public class TspGraph{
 		}
 	}
 
-	private TspNode addNodesToRoute(ArrayList<TspNode> route, TspNode curr, TspNode n)
+	private EuclideanNode addNodesToRoute(ArrayList<EuclideanNode> route, EuclideanNode curr, EuclideanNode n)
 	{
 		while (!curr.equals(n))
 		{
@@ -368,11 +368,11 @@ public class TspGraph{
 		return curr;
 	}
 
-	public void reverseRoute(ArrayList<TspNode> route)
+	public void reverseRoute(ArrayList<EuclideanNode> route)
 	{
 		if (route.size() > 1)
 		{
-			TspNode currNode, nextNode;
+			EuclideanNode currNode, nextNode;
 			int size = route.size();
 			Collections.reverse(route);
 			for (int i = 0; i < route.size() - 1; i++)
@@ -384,10 +384,10 @@ public class TspGraph{
 		}
 	}
 
-	public double calculateRouteLength(ArrayList<TspNode> nodes)
+	public double calculateRouteLength(ArrayList<EuclideanNode> nodes)
 	{
 		double routeLength = 0.0;
-		for (TspNode node : nodes)
+		for (EuclideanNode node : nodes)
 			routeLength += node.getDistanceToNext();
 		return routeLength;
 	}
@@ -395,7 +395,7 @@ public class TspGraph{
 	public String toString()
 	{
 		StringBuilder stringBuilder = new StringBuilder();
-		for (TspNode node : nodes)
+		for (EuclideanNode node : nodes)
 			stringBuilder.append(node.toString());
 		return stringBuilder.toString();
 	}
@@ -404,13 +404,13 @@ public class TspGraph{
 	{
 		if (graphics)
 		{
-			TspNode next;
+			EuclideanNode next;
 			while (displayGraph.getEdgeCount() > 0)
 			{
 				pipe.pump();
 				displayGraph.removeEdge(0);
 			}
-			for (TspNode node : nodes)
+			for (EuclideanNode node : nodes)
 			{
 				if ((next = node.getNext()) != null)
 				{
