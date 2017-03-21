@@ -1,3 +1,3 @@
 # TravellingSalesmanProblem
 
-In order to run, graaphstream gs-core jar is needed.
+In order to run, graphstream gs-core jar is needed.
